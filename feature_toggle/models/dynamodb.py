@@ -1,11 +1,47 @@
+from datetime import datetime, timezone
 from enum import Enum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, field_validator, validator
 
 
 class EntityType(str, Enum):
-    feat = "feat"
+    FEAT = "feat"
 
 
 class Dynamodb(BaseModel):
-    entity_type: EntityType = EntityType.feat
+    entity_type: EntityType = EntityType.FEAT
+    insert_time: datetime | None = None
+    modified_time: datetime | None = None
+    app_name: str
+    feat_name: str
+    enabled: bool
+    model_config: ConfigDict(
+        use_enum_values=True,
+    )
+
+    # @field_validator("insert_time", mode="after", check_fields=False)
+    @validator("insert_time", always=True)
+    def add_default_timestamp(cls, v):
+        if v is not None:
+            return v
+
+        return datetime.now(tz=timezone.utc)
+
+    @property
+    def pk(self):
+        return f"APP#{self.app_name}"
+
+    @property
+    def sk(self):
+        return f"FEAT#{self.feat_name}"
+
+    @property
+    def keys(self):
+        return {"PK": self.pk, "SK": self.sk}
+
+    def to_item(self):
+        payload = {
+            **self.keys,
+            **self.__dict__,
+        }
+        return payload

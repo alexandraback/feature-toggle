@@ -9,6 +9,7 @@ packages = [{include = "feature_toggle"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 pydantic = "^2.0.2"
+boto3 = "^1.28.2"
 
 
 [tool.poetry.group.test.dependencies]
