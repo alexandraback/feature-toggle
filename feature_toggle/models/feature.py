@@ -1,14 +1,14 @@
 from datetime import datetime, timezone
 from enum import Enum
 
-from pydantic import BaseModel, ConfigDict, field_validator, validator
+from pydantic import BaseModel, ConfigDict, field_serializer, field_validator, validator
 
 
 class EntityType(str, Enum):
     FEAT = "feat"
 
 
-class Dynamodb(BaseModel):
+class Feature(BaseModel):
     entity_type: EntityType = EntityType.FEAT
     insert_time: datetime | None = None
     modified_time: datetime | None = None
@@ -18,6 +18,12 @@ class Dynamodb(BaseModel):
     model_config: ConfigDict(
         use_enum_values=True,
     )
+
+    @field_serializer("insert_time", "modified_time")
+    def serialize_dt(self, dt: datetime):
+        if dt is None:
+            return
+        return dt.isoformat()
 
     # @field_validator("insert_time", mode="after", check_fields=False)
     @validator("insert_time", always=True)
@@ -42,6 +48,6 @@ class Dynamodb(BaseModel):
     def to_item(self):
         payload = {
             **self.keys,
-            **self.__dict__,
+            **self.model_dump(),
         }
         return payload
