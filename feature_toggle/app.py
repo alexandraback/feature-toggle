@@ -19,9 +19,10 @@ def main() -> None:
         "insert_time": datetime(2020, 5, 1, 12, 0, 0),
     }
     feature = Feature.model_validate(data)
+    print(feature.model_dump())
 
-    resp = to_dynamodb(table=table, item=feature)
-    print(resp)
+    # resp = to_dynamodb(table=table, item=feature)
+    # print(resp)
 
     # resp = table.scan()
     # print(resp)

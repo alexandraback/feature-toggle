@@ -15,9 +15,11 @@ class Feature(BaseModel):
     app_name: str
     feat_name: str
     enabled: bool
-    model_config: ConfigDict(
-        use_enum_values=True,
-    )
+
+    @field_serializer("entity_type")
+    def serialize_enum(self, enum: Enum):
+        if enum is not None:
+            return enum.value
 
     @field_serializer("insert_time", "modified_time")
     def serialize_dt(self, dt: datetime):
