@@ -16,7 +16,7 @@ def main() -> None:
         "app_name": "polaris",
         "feat_name": "new-issue",
         "enabled": True,
-        "insert_time": datetime(2020, 5, 1, 12, 0, 0),
+        "insert_time": datetime(2020, 5, 1, 12, 0, 0, 123456),
     }
     feature = Feature.model_validate(data)
     print(feature.model_dump())
