@@ -14,7 +14,7 @@ class Feature(BaseModel):
     modified_time: datetime | None = None
     app_name: str
     feat_name: str
-    enabled: bool
+    enabled: bool = False
 
     @field_serializer("entity_type")
     def serialize_enum(self, enum: Enum):
